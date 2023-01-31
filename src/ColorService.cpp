@@ -22,9 +22,7 @@ void ColorService::SetColorRgb(unsigned int red, unsigned int green, unsigned in
     analogWrite(B_gpio, blue);
 }
 
-void FadeColors(unsigned int red, unsigned int green, unsigned int blue)
-{
-}
+
 
 void ColorService::BeginRainbowCycle()
 {
@@ -54,13 +52,89 @@ void ColorService::BeginCustomColorCycle()
 {
     SetColorRgb(CustomColorCycleRed, CustomColorCycleGreen, CustomColorCycleBlue);
 
-    // if(ColorService::ColorCycleFade)
-    //     FadeColors(CustomColorCycleRed, CustomColorCycleGreen, CustomColorCycleBlue);
 }
 
 void ColorService::BeginSeasonalCycle(int day, int month)
 {
     BeginSummerCycle();
+}
+
+void ColorService::BeginChristmasCycle()
+{
+    for(int currentLight = 0; currentLight < 3; currentLight++)
+    {
+        for(int pwmValue = 0; pwmValue < 255; pwmValue++)
+        {
+            if(currentLight == 0)
+            {
+                SetColorRgb(pwmValue, 0, 0);
+            }
+            else if(currentLight == 1)
+            {
+                SetColorRgb(0, pwmValue, 0);
+            }
+            else
+            {
+                SetColorRgb(0, 0, pwmValue);
+            }
+
+            delay(15);
+
+        }
+        
+        for(int pwmValue = 255; pwmValue > 0; pwmValue--)
+        {
+            if(currentLight == 0)
+            {
+                SetColorRgb(pwmValue, 0, 0);
+            }
+            else if(currentLight == 1)
+            {
+                SetColorRgb(0, pwmValue, 0);
+            }
+            else
+            {
+                SetColorRgb(0, 0, pwmValue);
+            }
+
+            delay(15);
+
+        }
+    }
+}
+
+void ColorService::BeginHalloweenCycle()
+{
+    int pwmMinValue = 0;
+    int pwmMaxValue = 50;
+    int faktorDifference = 5;
+
+    for(int pwmValue = pwmMinValue; pwmValue < pwmMaxValue; pwmValue++)
+    {
+        SetColorRgb(pwmValue * faktorDifference, pwmValue, 0);
+        delay(50);
+    }
+
+    for(int pwmValue = pwmMaxValue; pwmValue > pwmMinValue; pwmValue--)
+    {
+        SetColorRgb(pwmValue * faktorDifference, pwmValue, 0);
+        delay(50);
+    }
+}
+
+void ColorService::BeginBirthdayCycle()
+{
+    for(int pwmValue = 0; pwmValue < 255; pwmValue++)
+    {
+        SetColorRgb(255, pwmValue, pwmValue);
+        delay(15);
+    }
+
+    for(int pwmValue = 255; pwmValue > 0; pwmValue--)
+    {
+        SetColorRgb(255, pwmValue, pwmValue);
+        delay(15);
+    }
 }
 
 void ColorService::BeginWinterCycle()
@@ -80,16 +154,73 @@ void ColorService::BeginWinterCycle()
 
 void ColorService::BeginSummerCycle()
 {
+    int pwmMinValue = 15;
+    int pwmMaxValue = 200;
 
-    for(int pwmValue = 15; pwmValue < 130; pwmValue++)
+    for(int pwmValue = pwmMinValue; pwmValue < pwmMaxValue; pwmValue++)
     {
         SetColorRgb(243, pwmValue, 0);
         delay(35);
     }
 
-    for(int pwmValue = 130; pwmValue > 15; pwmValue--)
+    for(int pwmValue = pwmMaxValue; pwmValue > pwmMinValue; pwmValue--)
     {
         SetColorRgb(243, pwmValue, 0);
         delay(35);
     }    
+}
+
+void ColorService::BeginSpringCycle()
+{
+    int pwmMinValue = 0;
+    int pwmMaxValue = 250;
+
+    for(int pwmValue = pwmMinValue; pwmValue < pwmMaxValue; pwmValue++)
+    {
+        SetColorRgb(pwmValue, 250, 0);
+        delay(35);
+    }
+
+    for(int pwmValue = pwmMaxValue; pwmValue > pwmMinValue; pwmValue--)
+    {
+        SetColorRgb(pwmValue, 250, 0);
+        delay(35);
+    }  
+}
+
+void ColorService::BeginAutumnCycle()
+{
+    int pwmMinValue = 0;
+    int pwmMaxValue = 100;
+
+    for(int pwmValue = pwmMinValue; pwmValue < pwmMaxValue; pwmValue++)
+    {
+        SetColorRgb(250, pwmValue, 0);
+        delay(35);
+    }
+
+    for(int pwmValue = pwmMaxValue; pwmValue > pwmMinValue; pwmValue--)
+    {
+        SetColorRgb(250, pwmValue, 0);
+        delay(35);
+    }  
+}
+
+void ColorService::BeginArcaneCycle()
+{
+    int pwmMinValue = 100;
+    int pwmMaxValue = 170;
+
+    for(int pwmValue = pwmMinValue; pwmValue < pwmMaxValue; pwmValue++)
+    {
+        SetColorRgb(pwmValue, 0, 255);
+        delay(35);
+    }
+
+    for(int pwmValue = pwmMaxValue; pwmValue > pwmMinValue; pwmValue--)
+    {
+        SetColorRgb(pwmValue, 0, 255);
+        delay(35);
+    }  
+
 }

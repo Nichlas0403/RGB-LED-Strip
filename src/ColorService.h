@@ -9,15 +9,14 @@ class ColorService
         int G_gpio;
         int B_gpio;
         void SetColorRgb(unsigned int red, unsigned int green, unsigned int blue);
-        void FadeColors(unsigned int red, unsigned int green, unsigned int blue);
 
-        void BeginSpringCycle();
+        // void BeginSpringCycle();
         // void BeginSummerCycle();
-        void BeginAutumnCycle();
+        // void BeginAutumnCycle();
         // void BeginWinterCycle();
-        void BeginBirthdayCycle();
-        void BeginChristmasCycle();
-        void BeginHalloweenCycle();
+        // void BeginBirthdayCycle();
+        // void BeginChristmasCycle();
+        // void BeginHalloweenCycle();
 
     public:
         ColorService(int r_gpio, int g_gpio, int b_gpio);
@@ -25,13 +24,18 @@ class ColorService
         unsigned int CustomColorCycleRed;
         unsigned int CustomColorCycleGreen;
         unsigned int CustomColorCycleBlue;
-        bool ColorCycleFade = false;
 
         void BeginSeasonalCycle(int day, int month);
         void BeginRainbowCycle();
         void BeginCustomColorCycle();
         void BeginWinterCycle();
         void BeginSummerCycle();
+        void BeginSpringCycle();
+        void BeginAutumnCycle();
+        void BeginChristmasCycle();
+        void BeginBirthdayCycle();
+        void BeginHalloweenCycle();
+        void BeginArcaneCycle();
 };
 
 

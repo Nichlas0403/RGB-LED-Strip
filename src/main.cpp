@@ -30,7 +30,7 @@ ColorService colorService(r, g, b);
 void setup() {
   Serial.begin(9600);
   connectToWiFi();
-  // colorService.ResetColors();
+  colorService.ResetColors();
 }
 
 void loop() {
@@ -45,7 +45,7 @@ void loop() {
       colorService.BeginCustomColorCycle();
       break;
     case SeasonalColorCycleOption:
-      colorService.BeginSummerCycle();
+      colorService.BeginArcaneCycle();
       break;
   }
 
@@ -74,11 +74,6 @@ void BeginCustomColorCycle()
     return;
   }
 
-  if(_server.hasArg("fade"))
-  {
-    int fade = _server.arg("fade").toInt();
-    colorService.ColorCycleFade = fade;
-  }
 
   if(_server.arg("red").toInt() < 0 || _server.arg("red").toInt() > 255)
   {
