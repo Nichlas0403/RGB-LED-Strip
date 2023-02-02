@@ -28,9 +28,13 @@ ColorService colorService(r, g, b);
 
 
 void setup() {
+  colorService.ResetColors();
   Serial.begin(9600);
   connectToWiFi();
-  colorService.ResetColors();
+  String currentDate = "2023-01-23T21:07:33.803159+01:00";
+  colorService.currentMonthOfYear = int((currentDate[5] + currentDate[6]));
+  colorService.currentDayOfMonth = int(currentDate[8] + currentDate[9]);
+
 }
 
 void loop() {

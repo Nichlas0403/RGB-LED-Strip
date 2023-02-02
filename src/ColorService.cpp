@@ -54,9 +54,56 @@ void ColorService::BeginCustomColorCycle()
 
 }
 
-void ColorService::BeginSeasonalCycle(int day, int month)
+void ColorService::BeginSeasonalCycle()
 {
-    BeginSummerCycle();
+    switch (ColorService::currentMonthOfYear)
+    {
+    case 1:
+        BeginWinterCycle();
+        break;
+    case 2:
+        BeginWinterCycle();
+        break;
+    case 3:
+        if(ColorService::currentDayOfMonth == 4)
+            BeginBirthdayCycle();
+        else
+            BeginSpringCycle();
+        break;
+    case 4:
+        BeginSpringCycle();
+        break;
+    case 5:
+        BeginSpringCycle();
+        break;
+    case 6:
+        if(ColorService::currentDayOfMonth == 24)
+            BeginBirthdayCycle();
+        else
+            BeginSummerCycle();
+        break;
+    case 7:
+        BeginSummerCycle();
+        break;
+    case 8:
+        BeginSummerCycle();
+        break;
+    case 9:
+        BeginAutumnCycle();
+        break;
+    case 10:
+        BeginHalloweenCycle();
+        break;
+    case 11:
+        BeginAutumnCycle();
+        break;
+    case 12:
+        BeginChristmasCycle();
+        break;
+    
+    default:
+        break;
+    }
 }
 
 void ColorService::BeginChristmasCycle()
