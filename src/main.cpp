@@ -20,10 +20,19 @@ void restServerRouting();
 void connectToWiFi();
 
 //Services
-int ColorOptionSelected = 2; 
-const int RainbowCycleOption = 0;
-const int CustomColorCycleOption = 1;
-const int SeasonalColorCycleOption = 2;
+int ColorOptionSelected = 3; 
+const int CustomColorCycleOption = 0;
+const int RainbowColorCycleOption = 1;
+const int ArcaneColorCycleOption = 2;
+const int SeasonalColorCycleOption = 3;
+const int SummerColorCycleOption = 4;
+const int AutumnColorCycleOption = 5;
+const int WinterColorCycleOption = 6;
+const int SpringColorCycleOption = 7;
+const int HalloweenColorCycleOption = 8;
+const int ChristmasColorCycleOption = 9;
+const int BirthdayColorCycleOption = 10;
+
 ColorService colorService(r, g, b);
 
 
@@ -31,10 +40,10 @@ void setup() {
   colorService.ResetColors();
   Serial.begin(9600);
   connectToWiFi();
-  String currentDate = "2023-01-23T21:07:33.803159+01:00";
-  colorService.currentMonthOfYear = int((currentDate[5] + currentDate[6]));
-  colorService.currentDayOfMonth = int(currentDate[8] + currentDate[9]);
-
+  String currentDate = "2023-12-25T21:07:33.803159+01:00";
+  
+  colorService.currentMonthOfYear = currentDate.substring(5,7).toInt();
+  colorService.currentDayOfMonth = currentDate.substring(8,10).toInt();
 }
 
 void loop() {
@@ -42,14 +51,38 @@ void loop() {
 
   switch(ColorOptionSelected)
   {
-    case RainbowCycleOption:
-      colorService.BeginRainbowCycle();
-      break;
     case CustomColorCycleOption:
       colorService.BeginCustomColorCycle();
       break;
-    case SeasonalColorCycleOption:
+    case RainbowColorCycleOption:
+      colorService.BeginRainbowCycle();
+      break;
+    case ArcaneColorCycleOption:
       colorService.BeginArcaneCycle();
+      break;
+    case SeasonalColorCycleOption:
+      colorService.BeginSeasonalCycle();
+      break;
+    case SummerColorCycleOption:
+      colorService.BeginSummerCycle();
+      break;
+    case AutumnColorCycleOption:
+      colorService.BeginSummerCycle();
+      break;
+    case WinterColorCycleOption:
+      colorService.BeginWinterCycle();
+      break;
+    case SpringColorCycleOption:
+      colorService.BeginSpringCycle();
+      break;
+    case HalloweenColorCycleOption:
+      colorService.BeginHalloweenCycle();
+      break;
+    case ChristmasColorCycleOption:
+      colorService.BeginChristmasCycle();
+      break;
+    case BirthdayColorCycleOption:
+      colorService.BeginBirthdayCycle();
       break;
   }
 
@@ -105,12 +138,75 @@ void BeginCustomColorCycle()
 
 }
 
+void BeginRainbowColorCycle()
+{
+  ColorOptionSelected = RainbowColorCycleOption;
+  _server.send(200);
+}
+
+void BeginArcaneColorCycle()
+{
+  ColorOptionSelected = ArcaneColorCycleOption;
+  _server.send(200);
+}
+
+void BeginSummerColorCycle()
+{
+  ColorOptionSelected = SummerColorCycleOption;
+  _server.send(200);
+}
+
+void BeginAutumnColorCycle()
+{
+  ColorOptionSelected = AutumnColorCycleOption;
+  _server.send(200);
+}
+
+void BeginWinterColorCycle()
+{
+  ColorOptionSelected = WinterColorCycleOption;
+  _server.send(200);
+}
+
+void BeginSpringColorCycle()
+{
+  ColorOptionSelected = SpringColorCycleOption;
+  _server.send(200);
+}
+
+void BeginHalloweenColorCycle()
+{
+  ColorOptionSelected = HalloweenColorCycleOption;
+  _server.send(200);
+}
+
+void BeginChristmasColorCycle()
+{
+  ColorOptionSelected = ChristmasColorCycleOption;
+  _server.send(200);
+}
+
+void BeginBirthdayColorCycle()
+{
+  ColorOptionSelected = BirthdayColorCycleOption;
+  _server.send(200);
+}
+
 // Core server functionality
 void restServerRouting() 
 {
   _server.on(F("/health-check"), HTTP_GET, HealthCheck);
-  _server.on(F("/begin-custom-color-cycle"), HTTP_PUT, BeginCustomColorCycle);
-  _server.on(F("/begin-seasonal-color-cycle"), HTTP_PUT, BeginSeasonalColorCycle);
+  _server.on(F("/custom"), HTTP_PUT, BeginCustomColorCycle);
+  _server.on(F("/seasonal"), HTTP_PUT, BeginSeasonalColorCycle);
+  _server.on(F("/rainbow"), HTTP_PUT, BeginRainbowColorCycle);
+  _server.on(F("/arcane"), HTTP_PUT, BeginArcaneColorCycle);
+  _server.on(F("/summer"), HTTP_PUT, BeginSummerColorCycle);
+  _server.on(F("/autumn"), HTTP_PUT, BeginAutumnColorCycle);
+  _server.on(F("/winter"), HTTP_PUT, BeginWinterColorCycle);
+  _server.on(F("/spring"), HTTP_PUT, BeginSpringColorCycle);
+  _server.on(F("/halloween"), HTTP_PUT, BeginHalloweenColorCycle);
+  _server.on(F("/christmas"), HTTP_PUT, BeginChristmasColorCycle);
+  _server.on(F("/birthday"), HTTP_PUT, BeginBirthdayColorCycle);
 }
 
 void handleNotFound() 

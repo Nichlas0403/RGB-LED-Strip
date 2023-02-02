@@ -1,23 +1,7 @@
-Plan:
+TODO:
 
-- When computer is turned on, call RGB Strip web server
-- RGB Strip web server calls CSCS
-	- Returns photoresistor value
-- If above a certain threshold
-	- RGB Strip web server calls CSCS for current date
-- If below threshold
-	- Sleep for 30 min
-		- Either delay or sleep pattern depending on demands
-
-
----
-
-RGB Strip webserver features:
-- Rainbow effect - cycle through RGB colors
-- Static color
-- Color based on date
-	- Seasonal colors 
-	- Halloween
-	- Christmas
-	- Birthdays
-	- Easter...?
+- HttpClient service
+- Set lightthreshold (change with endpoint?)
+- If below threshold, set delay for (30 min?)
+- Make rest of cycles available (DONE)
+- Endpoint to get list of options
