@@ -1,18 +1,19 @@
 #include <Arduino.h>
 #include "ColorService.h"
+#include "HttpService.h"
 
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
 
-#define r D2
-#define g D1
-#define b D0
+#define r D5
+#define g D2
+#define b D1
 
 
 
-String photoresistorPath = cscsIp + "/photoresistor-value";
-String currentDateTime = cscsIp + "/current-datetime";
+int photoresistorThreshold = 700;
+
 ESP8266WebServer _server(80);
 
 //Core server functionality
@@ -33,17 +34,34 @@ const int HalloweenColorCycleOption = 8;
 const int ChristmasColorCycleOption = 9;
 const int BirthdayColorCycleOption = 10;
 
-ColorService colorService(r, g, b);
+ColorService _colorService(r, g, b);
+HttpService _client;
 
 
 void setup() {
-  colorService.ResetColors();
+
   Serial.begin(9600);
+  _colorService.ResetColors();
   connectToWiFi();
-  String currentDate = "2023-12-25T21:07:33.803159+01:00";
-  
-  colorService.currentMonthOfYear = currentDate.substring(5,7).toInt();
-  colorService.currentDayOfMonth = currentDate.substring(8,10).toInt();
+  int photoresistorValue = (_client.GetPhotoresitorValue()).toInt();
+  Serial.println(photoresistorValue);
+
+  if(photoresistorValue > photoresistorThreshold)
+  {
+    Serial.println("SLEEP");
+    ESP.deepSleep(1.8e9);
+  }
+
+  String currentDateTime = _client.GetCurrentDate();
+
+  if(currentDateTime.substring(0,5) == "Error")
+  {
+    //This error sometimes happens. Simply needs to retry
+    ESP.deepSleep(1e6);
+  }
+
+  _colorService.currentMonthOfYear = currentDateTime.substring(5,7).toInt();
+  _colorService.currentDayOfMonth = currentDateTime.substring(8,10).toInt();
 }
 
 void loop() {
@@ -52,37 +70,37 @@ void loop() {
   switch(ColorOptionSelected)
   {
     case CustomColorCycleOption:
-      colorService.BeginCustomColorCycle();
+      _colorService.BeginCustomColorCycle();
       break;
     case RainbowColorCycleOption:
-      colorService.BeginRainbowCycle();
+      _colorService.BeginRainbowCycle();
       break;
     case ArcaneColorCycleOption:
-      colorService.BeginArcaneCycle();
+      _colorService.BeginArcaneCycle();
       break;
     case SeasonalColorCycleOption:
-      colorService.BeginSeasonalCycle();
+      _colorService.BeginSeasonalCycle();
       break;
     case SummerColorCycleOption:
-      colorService.BeginSummerCycle();
+      _colorService.BeginSummerCycle();
       break;
     case AutumnColorCycleOption:
-      colorService.BeginSummerCycle();
+      _colorService.BeginSummerCycle();
       break;
     case WinterColorCycleOption:
-      colorService.BeginWinterCycle();
+      _colorService.BeginWinterCycle();
       break;
     case SpringColorCycleOption:
-      colorService.BeginSpringCycle();
+      _colorService.BeginSpringCycle();
       break;
     case HalloweenColorCycleOption:
-      colorService.BeginHalloweenCycle();
+      _colorService.BeginHalloweenCycle();
       break;
     case ChristmasColorCycleOption:
-      colorService.BeginChristmasCycle();
+      _colorService.BeginChristmasCycle();
       break;
     case BirthdayColorCycleOption:
-      colorService.BeginBirthdayCycle();
+      _colorService.BeginBirthdayCycle();
       break;
   }
 
@@ -128,9 +146,9 @@ void BeginCustomColorCycle()
     return;
   }
 
-  colorService.CustomColorCycleRed = _server.arg("red").toInt();
-  colorService.CustomColorCycleGreen = _server.arg("green").toInt();
-  colorService.CustomColorCycleBlue = _server.arg("blue").toInt();
+  _colorService.CustomColorCycleRed = _server.arg("red").toInt();
+  _colorService.CustomColorCycleGreen = _server.arg("green").toInt();
+  _colorService.CustomColorCycleBlue = _server.arg("blue").toInt();
 
   ColorOptionSelected = CustomColorCycleOption;
 

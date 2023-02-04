@@ -10,6 +10,7 @@
             "includePath": [
                 "C:/Users/Nichl/Tinkering Folder/Projekter/RGB-LED-Strip/include",
                 "C:/Users/Nichl/Tinkering Folder/Projekter/RGB-LED-Strip/src",
+                "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPClient/src",
                 "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src",
                 "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS/src",
                 "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src",
@@ -23,7 +24,6 @@
                 "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src",
                 "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/EEPROM",
                 "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266AVRISP/src",
-                "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPClient/src",
                 "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src",
                 "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266LLMNR",
                 "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266NetBIOS",
@@ -58,6 +58,7 @@
                 "path": [
                     "C:/Users/Nichl/Tinkering Folder/Projekter/RGB-LED-Strip/include",
                     "C:/Users/Nichl/Tinkering Folder/Projekter/RGB-LED-Strip/src",
+                    "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPClient/src",
                     "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src",
                     "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS/src",
                     "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src",
@@ -71,7 +72,6 @@
                     "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src",
                     "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/EEPROM",
                     "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266AVRISP/src",
-                    "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPClient/src",
                     "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src",
                     "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266LLMNR",
                     "C:/Users/Nichl/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266NetBIOS",

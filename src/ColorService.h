@@ -8,10 +8,10 @@ class ColorService
         int R_gpio;
         int G_gpio;
         int B_gpio;
-        void SetColorRgb(unsigned int red, unsigned int green, unsigned int blue);
 
 
     public:
+        void SetColorRgb(unsigned int red, unsigned int green, unsigned int blue);
         int currentMonthOfYear;
         int currentDayOfMonth;
         ColorService(int r_gpio, int g_gpio, int b_gpio);
