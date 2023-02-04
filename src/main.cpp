@@ -10,9 +10,10 @@
 #define g D2
 #define b D1
 
+const char* _wifiName = "FTTH_WL1722";
+const char* _wifiPassword = "meawhivRyar9";
 
-
-int photoresistorThreshold = 700;
+int photoresistorThreshold = 450;
 
 ESP8266WebServer _server(80);
 
