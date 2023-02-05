@@ -1,19 +1,19 @@
 #include <Arduino.h>
 #include "ColorService.h"
 #include "HttpService.h"
+#include "FlashService.h"
 
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
 
+#include <LittleFS.h>
+
 #define r D5
 #define g D2
 #define b D1
 
-const char* _wifiName = "FTTH_WL1722";
-const char* _wifiPassword = "meawhivRyar9";
-
-int photoresistorThreshold = 450;
+const int photoresistorThreshold = 450;
 
 ESP8266WebServer _server(80);
 
@@ -22,7 +22,7 @@ void restServerRouting();
 void connectToWiFi();
 
 //Services
-int ColorOptionSelected = 3; 
+volatile int ColorOptionSelected = 3; 
 const int CustomColorCycleOption = 0;
 const int RainbowColorCycleOption = 1;
 const int ArcaneColorCycleOption = 2;
@@ -37,73 +37,80 @@ const int BirthdayColorCycleOption = 10;
 
 ColorService _colorService(r, g, b);
 HttpService _client;
-
+FlashService _flashService;
 
 void setup() {
 
-  Serial.begin(9600);
-  _colorService.ResetColors();
-  connectToWiFi();
-  int photoresistorValue = (_client.GetPhotoresitorValue()).toInt();
-  Serial.println(photoresistorValue);
+  Serial.begin(115200);
 
-  if(photoresistorValue > photoresistorThreshold)
-  {
-    Serial.println("SLEEP");
-    ESP.deepSleep(1.8e9);
-  }
 
-  String currentDateTime = _client.GetCurrentDate();
 
-  if(currentDateTime.substring(0,5) == "Error")
-  {
-    //This error sometimes happens. Simply needs to retry
-    ESP.deepSleep(1e6);
-  }
 
-  _colorService.currentMonthOfYear = currentDateTime.substring(5,7).toInt();
-  _colorService.currentDayOfMonth = currentDateTime.substring(8,10).toInt();
+
+  // Serial.begin(115200);
+  // _colorService.ResetColors();
+  // connectToWiFi();
+  // int photoresistorValue = (_client.GetPhotoresitorValue()).toInt();
+  // Serial.println(photoresistorValue);
+
+  // // if(photoresistorValue > photoresistorThreshold)
+  // // {
+  // //   Serial.println("SLEEP");
+  // //   ESP.deepSleep(1.8e9);
+  // // }
+
+  // String currentDateTime = _client.GetCurrentDate();
+
+  // if(currentDateTime.substring(0,5) == "Error")
+  // {
+  //   //An error. Simply needs to retry
+  //   ESP.deepSleep(1e6);
+  // }
+
+  // _colorService.currentMonthOfYear = currentDateTime.substring(5,7).toInt();
+  // _colorService.currentDayOfMonth = currentDateTime.substring(8,10).toInt();
 }
 
 void loop() {
-  _server.handleClient();
 
-  switch(ColorOptionSelected)
-  {
-    case CustomColorCycleOption:
-      _colorService.BeginCustomColorCycle();
-      break;
-    case RainbowColorCycleOption:
-      _colorService.BeginRainbowCycle();
-      break;
-    case ArcaneColorCycleOption:
-      _colorService.BeginArcaneCycle();
-      break;
-    case SeasonalColorCycleOption:
-      _colorService.BeginSeasonalCycle();
-      break;
-    case SummerColorCycleOption:
-      _colorService.BeginSummerCycle();
-      break;
-    case AutumnColorCycleOption:
-      _colorService.BeginSummerCycle();
-      break;
-    case WinterColorCycleOption:
-      _colorService.BeginWinterCycle();
-      break;
-    case SpringColorCycleOption:
-      _colorService.BeginSpringCycle();
-      break;
-    case HalloweenColorCycleOption:
-      _colorService.BeginHalloweenCycle();
-      break;
-    case ChristmasColorCycleOption:
-      _colorService.BeginChristmasCycle();
-      break;
-    case BirthdayColorCycleOption:
-      _colorService.BeginBirthdayCycle();
-      break;
-  }
+  // _server.handleClient();
+
+  // switch(ColorOptionSelected)
+  // {
+  //   case CustomColorCycleOption:
+  //     _colorService.BeginCustomColorCycle();
+  //     break;
+  //   case RainbowColorCycleOption:
+  //     _colorService.BeginRainbowCycle();
+  //     break;
+  //   case ArcaneColorCycleOption:
+  //     _colorService.BeginArcaneCycle();
+  //     break;
+  //   case SeasonalColorCycleOption:
+  //     _colorService.BeginSeasonalCycle();
+  //     break;
+  //   case SummerColorCycleOption:
+  //     _colorService.BeginSummerCycle();
+  //     break;
+  //   case AutumnColorCycleOption:
+  //     _colorService.BeginSummerCycle();
+  //     break;
+  //   case WinterColorCycleOption:
+  //     _colorService.BeginWinterCycle();
+  //     break;
+  //   case SpringColorCycleOption:
+  //     _colorService.BeginSpringCycle();
+  //     break;
+  //   case HalloweenColorCycleOption:
+  //     _colorService.BeginHalloweenCycle();
+  //     break;
+  //   case ChristmasColorCycleOption:
+  //     _colorService.BeginChristmasCycle();
+  //     break;
+  //   case BirthdayColorCycleOption:
+  //     _colorService.BeginBirthdayCycle();
+  //     break;
+  // }
 
 }
 
@@ -249,45 +256,45 @@ void handleNotFound()
 
 void connectToWiFi()
 {
-  WiFi.mode(WIFI_STA);
+  // WiFi.mode(WIFI_STA);
 
-  if (WiFi.SSID() != _wifiName) 
-  {
-    Serial.println("Creating new connection to wifi");
-    WiFi.begin(_wifiName, _wifiPassword);
-    WiFi.persistent(true);
-    WiFi.setAutoConnect(true);
-    WiFi.setAutoReconnect(true);
-  }
-  else
-  {
-    Serial.println("Using existing wifi settings...");
-  }
+  // if (WiFi.SSID() != _wifiName) 
+  // {
+  //   Serial.println("Creating new connection to wifi");
+  //   WiFi.begin(_wifiName, _wifiPassword);
+  //   WiFi.persistent(true);
+  //   WiFi.setAutoConnect(true);
+  //   WiFi.setAutoReconnect(true);
+  // }
+  // else
+  // {
+  //   Serial.println("Using existing wifi settings...");
+  // }
 
  
-  // Wait for connection
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("");
-  Serial.print("Connected to ");
-  Serial.println(_wifiName);
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
+  // // Wait for connection
+  // while (WiFi.status() != WL_CONNECTED) {
+  //   delay(500);
+  //   Serial.print(".");
+  // }
+  // Serial.println("");
+  // Serial.print("Connected to ");
+  // Serial.println(_wifiName);
+  // Serial.print("IP address: ");
+  // Serial.println(WiFi.localIP());
  
-  // Activate mDNS this is used to be able to connect to the server
-  // with local DNS hostmane esp8266.local
-  if (MDNS.begin("esp8266")) {
-    Serial.println("MDNS responder started");
-  }
+  // // Activate mDNS this is used to be able to connect to the server
+  // // with local DNS hostmane esp8266.local
+  // if (MDNS.begin("esp8266")) {
+  //   Serial.println("MDNS responder started");
+  // }
  
-  // Set server routing
-  restServerRouting();
-  // Set not found response
-  _server.onNotFound(handleNotFound);
-  // Start server
-  _server.begin();
+  // // Set server routing
+  // restServerRouting();
+  // // Set not found response
+  // _server.onNotFound(handleNotFound);
+  // // Start server
+  // _server.begin();
 
-  Serial.println("HTTP server started");
+  // Serial.println("HTTP server started");
 }

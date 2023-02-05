@@ -3,10 +3,10 @@
 
 HttpService::HttpService() : _client(), _wifiClient()
 {
-
- _baseUrl = "http://192.168.0.150";
+ _baseUrl = "";
  _photoresistorSubUrl = _baseUrl + "/photoresistor-value";
  _currentDateSubUrl = _baseUrl + "/current-datetime";
+
 }
 
 String HttpService::GetPhotoresitorValue()

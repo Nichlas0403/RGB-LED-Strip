@@ -16,9 +16,9 @@ class ColorService
         int currentDayOfMonth;
         ColorService(int r_gpio, int g_gpio, int b_gpio);
         void ResetColors();
-        unsigned int CustomColorCycleRed;
-        unsigned int CustomColorCycleGreen;
-        unsigned int CustomColorCycleBlue;
+        volatile unsigned int CustomColorCycleRed;
+        volatile unsigned int CustomColorCycleGreen;
+        volatile unsigned int CustomColorCycleBlue;
 
         void BeginSeasonalCycle();
         void BeginRainbowCycle();
