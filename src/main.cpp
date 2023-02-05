@@ -43,8 +43,13 @@ void setup() {
 
   Serial.begin(115200);
 
+  String _wifiSSID = "wifiSSID";
+  String _wifiPassword = "wifiPassword";
+  String _cscsBaseIp = "cscsBaseIp";
 
-
+  Serial.println(_flashService.ReadFromFlash(_wifiSSID));
+  Serial.println(_flashService.ReadFromFlash(_wifiPassword));
+  Serial.println(_flashService.ReadFromFlash(_cscsBaseIp));
 
 
   // Serial.begin(115200);

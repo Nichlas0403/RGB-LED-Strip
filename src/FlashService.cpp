@@ -6,8 +6,7 @@ void FlashService::WriteToFlash(String address, char *content)
 {
     LittleFS.begin();
     File file = LittleFS.open(address, "w");
-    // auto a = content;
-    file.write(a.c_str);
+    file.print(content);
     file.close();
     LittleFS.end();
 }
