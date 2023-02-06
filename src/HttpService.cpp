@@ -1,9 +1,12 @@
 #include "HttpService.h"
 #include "Arduino.h"
+#include "FlashService.h"
 
 HttpService::HttpService() : _client(), _wifiClient()
 {
- _baseUrl = "";
+  FlashService _flashService;
+
+ _baseUrl = _flashService.ReadFromFlash("cscsBaseIp");
  _photoresistorSubUrl = _baseUrl + "/photoresistor-value";
  _currentDateSubUrl = _baseUrl + "/current-datetime";
 

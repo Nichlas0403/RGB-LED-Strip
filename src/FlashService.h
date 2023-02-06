@@ -6,7 +6,7 @@
 class FlashService
 {
     public:
-        void WriteToFlash(String address, char *content);
+        void WriteToFlash(String address, String content);
         String ReadFromFlash(String address);
         void DeleteFromFlash(String address);
 };

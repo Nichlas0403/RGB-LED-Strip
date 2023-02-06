@@ -2,7 +2,7 @@
 #include "Arduino.h"
 #include <LittleFS.h>
 
-void FlashService::WriteToFlash(String address, char *content)
+void FlashService::WriteToFlash(String address, String content)
 {
     LittleFS.begin();
     File file = LittleFS.open(address, "w");
