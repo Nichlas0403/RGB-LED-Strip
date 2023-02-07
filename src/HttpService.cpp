@@ -20,10 +20,7 @@ String HttpService::GetPhotoresitorValue()
     int httpResponseCode = _client.GET();
 
     if (httpResponseCode > 0) {
-        // Serial.print("HTTP Response code: ");
-        // Serial.println(httpResponseCode);
         String payload = _client.getString();
-        // Serial.println(payload);
         return payload;
       }
       else 
@@ -31,7 +28,7 @@ String HttpService::GetPhotoresitorValue()
         Serial.print("Error code: ");
         Serial.println(_client.errorToString(httpResponseCode));
         Serial.println(httpResponseCode);
-        return "";
+        return "Error code: " + httpResponseCode;
       }
 }
 
@@ -44,14 +41,9 @@ String HttpService::GetCurrentDate()
     int httpResponseCode = _client.GET();
 
     if (httpResponseCode > 0) {
-        // Serial.print("HTTP Response code: ");
-        // Serial.println(httpResponseCode);
         String payload = _client.getString();
-        // Serial.println(payload);
-
         DynamicJsonDocument doc(1024);
         deserializeJson(doc, payload);
-
         return doc["formatted"];
       }
       else 
@@ -59,7 +51,7 @@ String HttpService::GetCurrentDate()
         Serial.print("Error code: ");
         Serial.println(_client.errorToString(httpResponseCode));
         Serial.println(httpResponseCode);
-        return "";
+        return "Error code: " + httpResponseCode;
       }
 
 }
