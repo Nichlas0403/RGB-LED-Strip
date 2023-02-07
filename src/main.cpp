@@ -63,7 +63,7 @@ void setup() {
   _colorService.CustomColorCycleGreen = (_flashService.ReadFromFlash(_customColorGreenFlash)).toInt();
   _colorService.CustomColorCycleBlue = (_flashService.ReadFromFlash(_customColorBlueFlash)).toInt();
 
-  //PWM 0 for each color
+  //Write PWM 0 for each RGB color
   _colorService.ResetColors();
 
   connectToWiFi();
