@@ -46,10 +46,6 @@ const int HalloweenColorCycleOption = 8;
 const int ChristmasColorCycleOption = 9;
 const int BirthdayColorCycleOption = 10;
 
-int CustomColorRed;
-int CustomColorGreen;
-int CustomColorBlue;
-
 ColorService _colorService(r, g, b);
 HttpService _client;
 FlashService _flashService;
@@ -63,14 +59,11 @@ void setup() {
   _wifiPassword = _flashService.ReadFromFlash(_wifiPasswordFlash);
   ColorOptionSelected = (_flashService.ReadFromFlash(_colorOptionSelectedFlash)).toInt();
 
-  CustomColorRed = (_flashService.ReadFromFlash(_customColorRedFlash)).toInt();
-  CustomColorGreen = (_flashService.ReadFromFlash(_customColorGreenFlash)).toInt();
-  CustomColorBlue = (_flashService.ReadFromFlash(_customColorBlueFlash)).toInt();
+  _colorService.CustomColorCycleRed = (_flashService.ReadFromFlash(_customColorRedFlash)).toInt();
+  _colorService.CustomColorCycleGreen = (_flashService.ReadFromFlash(_customColorGreenFlash)).toInt();
+  _colorService.CustomColorCycleBlue = (_flashService.ReadFromFlash(_customColorBlueFlash)).toInt();
 
-  _colorService.CustomColorCycleRed = CustomColorRed;
-  _colorService.CustomColorCycleGreen = CustomColorGreen;
-  _colorService.CustomColorCycleBlue = CustomColorBlue;
-
+  //PWM 0 for each color
   _colorService.ResetColors();
 
   connectToWiFi();
