@@ -28,7 +28,7 @@ String HttpService::GetPhotoresitorValue()
         Serial.print("Error code: ");
         Serial.println(_client.errorToString(httpResponseCode));
         Serial.println(httpResponseCode);
-        return "Error code: " + httpResponseCode;
+        return String(httpResponseCode);
       }
 }
 
@@ -51,7 +51,7 @@ String HttpService::GetCurrentDate()
         Serial.print("Error code: ");
         Serial.println(_client.errorToString(httpResponseCode));
         Serial.println(httpResponseCode);
-        return "Error code: " + httpResponseCode;
+        return "Error";
       }
 
 }

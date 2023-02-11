@@ -68,7 +68,15 @@ void setup() {
 
   connectToWiFi();
 
-  int photoresistorValue = (_client.GetPhotoresitorValue()).toInt();
+  String photoresistorValueResponse = _client.GetPhotoresitorValue();
+
+  if(photoresistorValueResponse == "Error")
+  {
+    //CSCS not responding
+    ESP.deepSleep(6e7);
+  }
+
+  int photoresistorValue = photoresistorValueResponse.toInt();
 
   if(photoresistorValue > _photoresistorThreshold)
   {
@@ -78,9 +86,9 @@ void setup() {
 
   String currentDateTime = _client.GetCurrentDate();
 
-  if(currentDateTime.substring(0,5) == "Error")
+  if(currentDateTime == "-11") //timeout
   {
-    //An error sometimes returned by the server. Need to retry
+    //An error sometimes returned by third party service. Need to retry
     ESP.deepSleep(1e6);
   }
 

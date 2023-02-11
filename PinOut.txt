@@ -1,0 +1,6 @@
+Purple: D0 to reset
+Blue --> D1
+Green --> D2
+Red --> D5
+White --> G
+Black --> 3V
