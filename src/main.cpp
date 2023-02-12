@@ -86,14 +86,8 @@ void setup() {
 
   String currentDateTime = _client.GetCurrentDate();
 
-  if(currentDateTime == "-11") //timeout
-  {
-    //An error sometimes returned by third party service. Need to retry
-    ESP.deepSleep(1e6);
-  }
-
-  _colorService.currentMonthOfYear = currentDateTime.substring(5,7).toInt();
-  _colorService.currentDayOfMonth = currentDateTime.substring(8,10).toInt();
+  _colorService.currentDayOfMonth = currentDateTime.substring(0,2).toInt();
+  _colorService.currentMonthOfYear = currentDateTime.substring(3,5).toInt();
 }
 
 void loop() {

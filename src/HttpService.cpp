@@ -41,10 +41,8 @@ String HttpService::GetCurrentDate()
     int httpResponseCode = _client.GET();
 
     if (httpResponseCode > 0) {
-        String payload = _client.getString();
-        DynamicJsonDocument doc(1024);
-        deserializeJson(doc, payload);
-        return doc["formatted"];
+        String response = _client.getString();
+        return response;
       }
       else 
       {
