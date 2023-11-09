@@ -1,7 +1,8 @@
 #include <Arduino.h>
 #include "ColorService.h"
-#include "HttpService.h"
 #include "FlashService.h"
+#include "GPIOService.h"
+#include <ArduinoJson.h>
 
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
@@ -12,6 +13,7 @@
 #define r D5
 #define g D2
 #define b D1
+#define relayGPIO D7
 
 String _wifiSSIDFlash = "wifiSSID";
 String _wifiPasswordFlash = "wifiPassword";
@@ -21,6 +23,9 @@ String _colorOptionSelectedFlash = "colorOptionSelected";
 String _customColorRedFlash = "customColorRedFlash";
 String _customColorGreenFlash = "customColorGreenFlash";
 String _customColorBlueFlash = "customColorBlueFlash";
+
+String _dayOfMonthFlash = "dayOfMonthFlash";
+String _monthOfYearFlash = "dayOfYearFlash";
 
 int _photoresistorThreshold;
 String _wifiName;
@@ -47,12 +52,14 @@ const int ChristmasColorCycleOption = 9;
 const int BirthdayColorCycleOption = 10;
 
 ColorService _colorService(r, g, b);
-HttpService _client;
 FlashService _flashService;
+GPIOService _gpioService(relayGPIO);
 
 void setup() {
 
   Serial.begin(115200);
+
+  _gpioService.TurnRelayOff();
 
   _photoresistorThreshold = (_flashService.ReadFromFlash(_photoResistorThresholdFlash)).toInt();
   _wifiName = _flashService.ReadFromFlash(_wifiSSIDFlash);
@@ -62,74 +69,59 @@ void setup() {
   _colorService.CustomColorCycleRed = (_flashService.ReadFromFlash(_customColorRedFlash)).toInt();
   _colorService.CustomColorCycleGreen = (_flashService.ReadFromFlash(_customColorGreenFlash)).toInt();
   _colorService.CustomColorCycleBlue = (_flashService.ReadFromFlash(_customColorBlueFlash)).toInt();
+  _colorService.currentDayOfMonth = (_flashService.ReadFromFlash(_dayOfMonthFlash)).toInt();
+  _colorService.currentMonthOfYear = (_flashService.ReadFromFlash(_monthOfYearFlash)).toInt();
 
-  //Write PWM 0 for each RGB color
   _colorService.ResetColors();
 
   connectToWiFi();
 
-  String photoresistorValueResponse = _client.GetPhotoresitorValue();
-
-  if(photoresistorValueResponse == "Error")
-  {
-    //CSCS not responding
-    ESP.deepSleep(6e7);
-  }
-
-  int photoresistorValue = photoresistorValueResponse.toInt();
-
-  if(photoresistorValue > _photoresistorThreshold)
-  {
-    Serial.println("SLEEP");
-    ESP.deepSleep(1.8e9);
-  }
-
-  String currentDateTime = _client.GetCurrentDate();
-
-  _colorService.currentDayOfMonth = currentDateTime.substring(0,2).toInt();
-  _colorService.currentMonthOfYear = currentDateTime.substring(3,5).toInt();
 }
 
 void loop() {
 
   _server.handleClient();
 
-  switch(ColorOptionSelected)
+  if(_gpioService.RelayState)
   {
-    case CustomColorCycleOption:
-      _colorService.BeginCustomColorCycle();
-      break;
-    case RainbowColorCycleOption:
-      _colorService.BeginRainbowCycle();
-      break;
-    case ArcaneColorCycleOption:
-      _colorService.BeginArcaneCycle();
-      break;
-    case SeasonalColorCycleOption:
-      _colorService.BeginSeasonalCycle();
-      break;
-    case SummerColorCycleOption:
-      _colorService.BeginSummerCycle();
-      break;
-    case AutumnColorCycleOption:
-      _colorService.BeginSummerCycle();
-      break;
-    case WinterColorCycleOption:
-      _colorService.BeginWinterCycle();
-      break;
-    case SpringColorCycleOption:
-      _colorService.BeginSpringCycle();
-      break;
-    case HalloweenColorCycleOption:
-      _colorService.BeginHalloweenCycle();
-      break;
-    case ChristmasColorCycleOption:
-      _colorService.BeginChristmasCycle();
-      break;
-    case BirthdayColorCycleOption:
-      _colorService.BeginBirthdayCycle();
-      break;
+    switch(ColorOptionSelected)
+    {
+      case CustomColorCycleOption:
+        _colorService.BeginCustomColorCycle();
+        break;
+      case RainbowColorCycleOption:
+        _colorService.BeginRainbowCycle();
+        break;
+      case ArcaneColorCycleOption:
+        _colorService.BeginArcaneCycle();
+        break;
+      case SeasonalColorCycleOption:
+        _colorService.BeginSeasonalCycle();
+        break;
+      case SummerColorCycleOption:
+        _colorService.BeginSummerCycle();
+        break;
+      case AutumnColorCycleOption:
+        _colorService.BeginSummerCycle();
+        break;
+      case WinterColorCycleOption:
+        _colorService.BeginWinterCycle();
+        break;
+      case SpringColorCycleOption:
+        _colorService.BeginSpringCycle();
+        break;
+      case HalloweenColorCycleOption:
+        _colorService.BeginHalloweenCycle();
+        break;
+      case ChristmasColorCycleOption:
+        _colorService.BeginChristmasCycle();
+        break;
+      case BirthdayColorCycleOption:
+        _colorService.BeginBirthdayCycle();
+        break;
+    }
   }
+
 
 }
 
@@ -141,35 +133,21 @@ void HealthCheck()
   _server.send(200);
 }
 
-void GetPhotoresistorThreshold()
+void GetRelayState()
 {
-
-  String threshold = _flashService.ReadFromFlash(_photoResistorThresholdFlash);
-  _server.send(200, "text/json", threshold);
-
+  _server.send(200, "text/json", String(_gpioService.RelayState));
 }
 
-void SetPhotoresistorThreshold()
+void SetRelayStateOn()
 {
-  String arg = "threshold";
-
-  if(!_server.hasArg(arg))
-  {
-    _server.send(400, "text/json", "Argument: threshold is missing");
-    return;
-  }
-
-  int threshold = (_server.arg(arg)).toInt();
-
-  if(threshold < 0 || threshold > 1023)
-  {
-    _server.send(400, "text/json", "Value must be between 0 and 1023");
-  }
-
-  _flashService.WriteToFlash(_photoResistorThresholdFlash, String(threshold));
-
+  _gpioService.TurnRelayOn();
   _server.send(200);
+}
 
+void SetRelayStateOff()
+{
+  _gpioService.TurnRelayOff();
+  _server.send(200);
 }
 
 void SetWifiName()
@@ -222,6 +200,23 @@ void SetCSCSBaseIp()
 
 void BeginSeasonalColorCycle()
 {
+  DynamicJsonDocument request(1024);
+  deserializeJson(request, _server.arg("plain"));
+
+  int dayOfMonth = request["day"];
+  int monthOfYear = request["month"];
+
+  if(dayOfMonth < 1 || dayOfMonth > 31 || monthOfYear < 1 || monthOfYear > 12) 
+  {
+    _server.send(400, "text/json", "invalid date");
+  }
+
+  _colorService.currentDayOfMonth = dayOfMonth;
+  _colorService.currentMonthOfYear = monthOfYear;
+
+  _flashService.WriteToFlash(_dayOfMonthFlash, String(dayOfMonth));
+  _flashService.WriteToFlash(_monthOfYearFlash, String(monthOfYear));
+
   ColorOptionSelected = SeasonalColorCycleOption;
   _server.send(200);
   _flashService.WriteToFlash(_colorOptionSelectedFlash, String(ColorOptionSelected));
@@ -235,7 +230,6 @@ void BeginCustomColorCycle()
     _server.send(400, "text/json", "One or more arguments are missing: red, green, blue");
     return;
   }
-
 
   if(_server.arg("red").toInt() < 0 || _server.arg("red").toInt() > 255)
   {
@@ -335,11 +329,14 @@ void BeginBirthdayColorCycle()
 void restServerRouting() 
 {
   _server.on(F("/health-check"), HTTP_GET, HealthCheck);
-  _server.on(F("/photoresistor-threshold"), HTTP_GET, GetPhotoresistorThreshold);
-  _server.on(F("/photoresistor-threshold"), HTTP_PUT, SetPhotoresistorThreshold);
+  _server.on(F("/relay"), HTTP_GET, GetRelayState);
+  _server.on(F("/relay/on"), HTTP_PUT, SetRelayStateOn);
+  _server.on(F("/relay/off"), HTTP_PUT, SetRelayStateOff);
+
   _server.on(F("/wifi-name"), HTTP_PUT, SetWifiName);
   _server.on(F("/wifi-password"), HTTP_PUT, SetWifiPassword);
   _server.on(F("/cscs-baseip"), HTTP_PUT, SetCSCSBaseIp);
+
   _server.on(F("/custom"), HTTP_PUT, BeginCustomColorCycle);
   _server.on(F("/seasonal"), HTTP_PUT, BeginSeasonalColorCycle);
   _server.on(F("/rainbow"), HTTP_PUT, BeginRainbowColorCycle);
