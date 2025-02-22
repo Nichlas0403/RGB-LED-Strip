@@ -2,6 +2,7 @@
 #include "ColorService.h"
 #include "FlashService.h"
 #include "GPIOService.h"
+#include "SmartHomeService.h"
 #include <ArduinoJson.h>
 
 #include <ESP8266WiFi.h>
@@ -37,6 +38,11 @@ ESP8266WebServer _server(80);
 void restServerRouting();
 void connectToWiFi();
 
+//WiFi
+unsigned long previousMillis = 0;
+const long interval = 10000; // Check every 10 seconds
+bool smarthomeUpdated = false;
+
 //Services
 volatile int ColorOptionSelected;
 const int RainbowColorCycleOption = 0;
@@ -51,6 +57,7 @@ const int HalloweenColorCycleOption = 8;
 const int ChristmasColorCycleOption = 9;
 const int BirthdayColorCycleOption = 10;
 
+SmartHomeService _smartHomeService;
 ColorService _colorService(r, g, b);
 FlashService _flashService;
 GPIOService _gpioService(relayGPIO);
@@ -75,12 +82,52 @@ void setup() {
   _colorService.ResetColors();
 
   connectToWiFi();
-
+  smarthomeUpdated = _smartHomeService.UpdateIpAddress(WiFi.localIP().toString());
 }
 
 void loop() {
 
   _server.handleClient();
+
+  unsigned long currentMillis = millis();
+
+  if(!smarthomeUpdated)
+  {
+    smarthomeUpdated = _smartHomeService.UpdateIpAddress(WiFi.localIP().toString());
+  }
+  
+  // Check Wi-Fi status periodically
+  if ((currentMillis - previousMillis >= interval) && WiFi.status() != WL_CONNECTED) 
+  {
+    smarthomeUpdated = false;
+
+    Serial.println("WiFi disconnected, attempting to reconnect...");
+    previousMillis = currentMillis;  // Reset the timer
+
+    // Only attempt to reconnect if not already reconnecting
+    if (!WiFi.isConnected()) 
+    {
+      WiFi.reconnect(); // Let the ESP32 handle reconnection automatically
+      
+      // Wait until connected, with a timeout
+      unsigned long startAttemptTime = millis();
+      while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 10000) 
+      {
+        delay(500); // Small delay to allow for network stability
+        Serial.println("Waiting for WiFi to reconnect...");
+      }
+    }
+
+    // Check if reconnection was successful
+    if (WiFi.status() == WL_CONNECTED) 
+    {
+      Serial.println("Reconnected to WiFi successfully!");
+    } 
+    else 
+    {
+      Serial.println("Failed to reconnect to WiFi.");
+    }
+  }
 
   if(_gpioService.RelayState)
   {
@@ -328,7 +375,7 @@ void BeginBirthdayColorCycle()
 // Core server functionality
 void restServerRouting() 
 {
-  _server.on(F("/health-check"), HTTP_GET, HealthCheck);
+  _server.on(F("/health"), HTTP_GET, HealthCheck);
   _server.on(F("/relay"), HTTP_GET, GetRelayState);
   _server.on(F("/relay/on"), HTTP_PUT, SetRelayStateOn);
   _server.on(F("/relay/off"), HTTP_PUT, SetRelayStateOff);
@@ -372,6 +419,10 @@ void handleNotFound()
 void connectToWiFi()
 {
   WiFi.mode(WIFI_STA);
+  WiFi.setHostname("pond_pump_control");
+
+  Serial.println("Connecting to:");
+  Serial.println(_wifiName);
 
   if (WiFi.SSID() != _wifiName) 
   {
